@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sakura Messenger v1.2 (alpha)</title>
+    <link rel="icon" type="image/x-icon" href="https://emojicdn.elk.sh/🌸">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Sawarabi+Gothic&display=swap" rel="stylesheet">
+    <style>
+        /* ========== ОСНОВНЫЕ СТИЛИ ========== */
+        :root {
+            --sakura-pink: #ffb7c5;
+            --sakura-dark: #8a4b6e;
+            --sakura-light: #fff5f7;
+            --sakura-accent: #e83e8c;
+            --sakura-leaf: #5d9b7e;
+            --sakura-branch: #8b5a2b;
+            --sakura-bg: linear-gradient(135deg, #fff5f7 0%, #ffeef2 100%);
+            --sakura-shadow: 0 10px 30px rgba(138, 75, 110, 0.15);
+            --sakura-border: 1px solid rgba(255, 183, 197, 0.3);
+            --sakura-text: #4a2c40;
+            --sakura-text-light: #8a6c7d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif;
+            background: var(--sakura-bg);
+            color: var(--sakura-text);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* Лепестки сакуры */
+        .sakura-petal {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: var(--sakura-pink);
+            border-radius: 50% 0 50% 50%;
+            opacity: 0.7;
+            z-index: -1;
+            pointer-events: none;
+            animation: float 15s ease-in-out infinite alternate;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) translateX(10px) rotate(10deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        
+        /* Контейнер */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* ========== ШАПКА ========== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: var(--sakura-border);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--sakura-pink);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 5px 15px rgba(255, 183, 197, 0.4);
+        }
+        
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--sakura-accent), var(--sakura-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        .version-badge {
+            background: linear-gradient(45deg, var(--sakura-dark), var(--sakura-accent));
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(138, 75, 110, 0.3);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: var(--sakura-text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255, 183, 197, 0.1);
+            color: var(--sakura-accent);
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        /* ========== ГЛАВНАЯ СТРАНИЦА (PUBLIC) ========== */
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            margin: 20px 0;
+            box-shadow: var(--sakura-shadow);
+            border: var(--sakura-border);
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            color: var(--sakura-dark);
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--sakura-accent), var(--sakura-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            color: var(--sakura-text-light);
+            max-width: 800px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        
+        .btn {
+            padding: 16px 32px;
+            border-radius: 12px;
+            border: none;
+            font-family: 'Sawarabi Gothic', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--sakura-accent), var(--sakura-pink));
+            color: white;
+            box-shadow: 0 6px 20px rgba(232, 62, 140, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(232, 62, 140, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--sakura-accent);
+            border: 2px solid var(--sakura-pink);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 183, 197, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        /* ========== ФУТЕР ========== */
+        .footer {
+            margin-top: auto;
+            padding: 40px 0 20px;
+            border-top: var(--sakura-border);
+            text-align: center;
+            color: var(--sakura-text-light);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-link {
+            color: var(--sakura-text-light);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-link:hover {
+            color: var(--sakura-accent);
+        }
+        
+        .copyright {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        /* ========== СТРАНИЦА ЧАТА ========== */
+        #chatPage {
+            display: none;
+        }
+        
+        .messenger-container {
+            display: flex;
+            flex-grow: 1;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--sakura-shadow);
+            height: calc(100vh - 140px);
+            background: white;
+        }
+        
+        /* Панель ботов */
+        .bots-panel {
+            width: 320px;
+            background: rgba(255, 255, 255, 0.95);
+            border-right: var(--sakura-border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .user-profile {
+            padding: 25px;
+            border-bottom: var(--sakura-border);
+            background: linear-gradient(to right, rgba(255, 247, 248, 0.9), rgba(255, 240, 243, 0.9));
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--sakura-accent), var(--sakura-pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            box-shadow: 0 5px 15px rgba(232, 62, 140, 0.3);
+            border: 3px solid white;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--sakura-dark);
+            margin-bottom: 5px;
+        }
+        
+        .user-status {
+            font-size: 14px;
+            color: var(--sakura-text-light);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--sakura-leaf);
+            display: inline-block;
+        }
+        
+        .settings-btn, .logout-btn {
+            background: none;
+            border: none;
+            color: var(--sakura-text-light);
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.3s;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .settings-btn:hover, .logout-btn:hover {
+            color: var(--sakura-accent);
+            background: rgba(232, 62, 140, 0.1);
+        }
+        
+        .bots-header {
+            padding: 20px 25px;
+            border-bottom: var(--sakura-border);
+        }
+        
+        .bots-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--sakura-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .bots-search {
+            margin-top: 15px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 183, 197, 0.5);
+            background: rgba(255, 255, 255, 0.8);
+            font-family: 'Sawarabi Gothic', sans-serif;
+            font-size: 14px;
+            color: var(--sakura-text);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--sakura-text-light);
+        }
+        
+        .bots-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .bot-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.6);
+        }
+        
+        .bot-card:hover {
+            background: rgba(255, 183, 197, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .bot-card.active {
+            background: rgba(255, 183, 197, 0.15);
+            border-color: var(--sakura-pink);
+            box-shadow: 0 5px 15px rgba(255, 183, 197, 0.2);
+        }
+        
+        .bot-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+        
+        .bot-info {
+            flex: 1;
+        }
+        
+        .bot-name {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--sakura-dark);
+            margin-bottom: 5px;
+        }
+        
+        .bot-desc {
+            font-size: 13px;
+            color: var(--sakura-text-light);
+            line-height: 1.4;
+        }
+        
+        /* Область чата */
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--sakura-light);
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            padding: 20px 30px;
+            border-bottom: var(--sakura-border);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .chat-bot-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .chat-bot-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chat-bot-text h3 {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--sakura-dark);
+            margin-bottom: 5px;
+        }
+        
+        .chat-bot-text p {
+            font-size: 14px;
+            color: var(--sakura-text-light);
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .message {
+            display: flex;
+            max-width: 75%;
+            animation: messageAppear 0.4s ease-out;
+        }
+        
+        @keyframes messageAppear {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message-bot {
+            align-self: flex-start;
+        }
+        
+        .message-user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+        
+        .message-bot .message-avatar {
+            margin-right: 12px;
+            background: linear-gradient(45deg, var(--sakura-leaf), #7bc4a9);
+        }
+        
+        .message-user .message-avatar {
+            margin-left: 12px;
+            background: linear-gradient(45deg, var(--sakura-accent), var(--sakura-pink));
+        }
+        
+        .message-content {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .message-bubble {
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+        
+        .message-bot .message-bubble {
+            background: white;
+            border-top-left-radius: 5px;
+            color: var(--sakura-text);
+            border: 1px solid rgba(255, 183, 197, 0.3);
+        }
+        
+        .message-user .message-bubble {
+            background: linear-gradient(45deg, var(--sakura-accent), var(--sakura-pink));
+            color: white;
+            border-top-right-radius: 5px;
+        }
+        
+        .message-time {
+            font-size: 12px;
+            color: var(--sakura-text-light);
+            margin-top: 8px;
+            padding: 0 5px;
+        }
+        
+        .message-user .message-time {
+            text-align: right;
+        }
+        
+        .chat-input-container {
+            padding: 20px 30px;
+            border-top: var(--sakura-border);
+            background: white;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 15px 20px;
+            border-radius: 25px;
+            border: 2px solid rgba(255, 183, 197, 0.5);
+            background: rgba(255, 255, 255, 0.8);
+            font-family: 'Sawarabi Gothic', sans-serif;
+            font-size: 15px;
+            color: var(--sakura-text);
+            resize: none;
+        }
+        
+        .send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(45deg, var(--sakura-accent), var(--sakura-pink));
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        /* ========== НАСТРОЙКИ ========== */
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .settings-content {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--sakura-shadow);
+            animation: modalAppear 0.3s ease-out;
+        }
+        
+        @keyframes modalAppear {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .settings-header {
+            padding: 25px;
+            background: linear-gradient(45deg, var(--sakura-accent), var(--sakura-pink));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .settings-header h2 {
+            font-size: 24px;
+        }
+        
+        .close-settings {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-settings:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .settings-body {
+            padding: 25px;
+            overflow-y: auto;
+            max-height: calc(90vh - 120px);
+        }
+        
+        .settings-section {
+            margin-bottom: 30px;
+        }
+        
+        .settings-section h3 {
+            color: var(--sakura-dark);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--sakura-pink);
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 183, 197, 0.3);
+        }
+        
+        .setting-label {
+            font-weight: 500;
+        }
+        
+        .setting-control {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--sakura-accent);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+        
+        .color-picker {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .select-input {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 183, 197, 0.5);
+            background: white;
+            font-family: 'Sawarabi Gothic', sans-serif;
+            color: var(--sakura-text);
+        }
+        
+        /* ========== АДАПТИВНОСТЬ ========== */
+        @media (max-width: 768px) {
+            .header {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 32px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+            
+            .messenger-container {
+                height: calc(100vh - 180px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Лепестки сакуры -->
+    <div id="sakuraPetals"></div>
+    
+    <!-- Главная страница -->
+    <div id="homePage" class="container">
+        <!-- Шапка -->
+        <header class="header">
+            <a href="#" class="logo" onclick="showHomePage(); return false;">
+                <div class="logo-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="logo-text">Sakura Messenger</div>
+            </a>
+            
+            <div class="nav-links">
+                <a href="#" class="nav-link" onclick="showHomePage(); return false;">Главная</a>
+                <a href="#" class="nav-link" onclick="showChatPage(); return false;">Мессенджер</a>
+                <a href="#" class="nav-link" onclick="showSettings(); return false;">Настройки</a>
+                <a href="#" class="nav-link" id="domainLink">sakura-messenger.ru</a>
+            </div>
+            
+            <div class="user-menu">
+                <button class="btn btn-primary" onclick="showLoginModal()">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span id="loginBtnText">Войти</span>
+                </button>
+            </div>
+            
+            <div class="version-badge">v1.2 (alpha)</div>
+        </header>
+        
+        <!-- Герой-секция -->
+        <section class="hero">
+            <h1>Sakura Messenger</h1>
+            <p>Публичный мессенджер с уникальными ботами в стиле цветущей сакуры. Общайтесь, развивайтесь и находите новых друзей в атмосфере японской эстетики.</p>
+            
+            <div class="cta-buttons">
+                <button class="btn btn-primary" onclick="showChatPage()">
+                    <i class="fas fa-comments"></i>
+                    Начать общение
+                </button>
+                <button class="btn btn-secondary" onclick="showSettings()">
+                    <i class="fas fa-cog"></i>
+                    Настройки
+                </button>
+            </div>
+            
+            <div style="margin-top: 40px; color: var(--sakura-text-light);">
+                <p><i class="fas fa-users"></i> Уже с нами: <span id="userCount">1,247</span> пользователей</p>
+                <p><i class="fas fa-comment-dots"></i> Отправлено сообщений: <span id="messageCount">15,892</span></p>
+            </div>
+        </section>
+        
+        <!-- Информация о ботах -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 40px 0;">
+            <div style="background: white; padding: 25px; border-radius: 15px; text-align: center; box-shadow: var(--sakura-shadow);">
+                <div style="width: 70px; height: 70px; background: linear-gradient(45deg, #ffb7c5, #e83e8c); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                    <i class="fas fa-spa"></i>
+                </div>
+                <h3 style="color: var(--sakura-dark); margin-bottom: 10px;">Сакура</h3>
+                <p style="color: var(--sakura-text-light); font-size: 14px;">Нежная и поэтичная, как лепестки сакуры</p>
+            </div>
+            
+            <div style="background: white; padding: 25px; border-radius: 15px; text-align: center; box-shadow: var(--sakura-shadow);">
+                <div style="width: 70px; height: 70px; background: linear-gradient(45deg, #8a4b6e, #b36b9d); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                    <i class="fas fa-user-ninja"></i>
+                </div>
+                <h3 style="color: var(--sakura-dark); margin-bottom: 10px;">Кеншин</h3>
+                <p style="color: var(--sakura-text-light); font-size: 14px;">Мудрый самурай с философским взглядом</p>
+            </div>
+            
+            <div style="background: white; padding: 25px; border-radius: 15px; text-align: center; box-shadow: var(--sakura-shadow);">
+                <div style="width: 70px; height: 70px; background: linear-gradient(45deg, #e83e8c, #ff6b9d); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                    <i class="fas fa-laugh-squint"></i>
+                </div>
+                <h3 style="color: var(--sakura-dark); margin-bottom: 10px;">Ханако</h3>
+                <p style="color: var(--sakura-text-light); font-size: 14px;">Веселая и энергичная, любит аниме</p>
+            </div>
+            
+            <div style="background: white; padding: 25px; border-radius: 15px; text-align: center; box-shadow: var(--sakura-shadow);">
+                <div style="width: 70px; height: 70px; background: linear-gradient(45deg, #5d9b7e, #7bc4a9); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3 style="color: var(--sakura-dark); margin-bottom: 10px;">Такеши</h3>
+                <p style="color: var(--sakura-text-light); font-size: 14px;">Серьезный и практичный, знает много фактов</p>
+            </div>
+        </div>
+        
+        <!-- Футер -->
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="#" class="footer-link" onclick="showHomePage(); return false;">Главная</a>
+                <a href="#" class="footer-link" onclick="showChatPage(); return false;">Мессенджер</a>
+                <a href="#" class="footer-link" onclick="showSettings(); return false;">Настройки</a>
+                <a href="#" class="footer-link" onclick="alert('Для публикации на sakura-messenger.ru нужно:\n1. Купить домен\n2. Настроить хостинг\n3. Загрузить этот файл на сервер');">Опубликовать</a>
+                <a href="#" class="footer-link" onclick="showBugReport(); return false;">Сообщить об ошибке</a>
+            </div>
+            <div class="copyright">
+                Sakura Messenger v1.2 (alpha) © 2024 | Домен: sakura-messenger.ru
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Страница чата -->
+    <div id="chatPage" class="container">
+        <div class="messenger-container">
+            <!-- Панель ботов -->
+            <div class="bots-panel">
+                <div class="user-profile">
+                    <div id="userAvatar" class="user-avatar">Г</div>
+                    <div class="user-info">
+                        <div id="userName" class="user-name">Гость</div>
+                        <div class="user-status">
+                            <span class="status-indicator"></span>
+                            <span id="userStatus">онлайн</span>
+                        </div>
+                    </div>
+                    <button class="settings-btn" onclick="showSettings()" title="Настройки">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button class="logout-btn" onclick="showHomePage()" title="На главную">
+                        <i class="fas fa-home"></i>
+                    </button>
+                </div>
+                
+                <div class="bots-header">
+                    <div class="bots-title">
+                        <i class="fas fa-robot"></i>
+                        <span>Доступные боты</span>
+                    </div>
+                    
+                    <div class="bots-search">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="botsSearch" class="search-input" placeholder="Поиск бота..." oninput="filterBots()">
+                    </div>
+                </div>
+                
+                <div class="bots-list" id="botsList">
+                    <!-- Боты будут добавлены через JS -->
+                </div>
+            </div>
+            
+            <!-- Область чата -->
+            <div class="chat-panel">
+                <div class="chat-header">
+                    <div class="chat-bot-info">
+                        <div id="currentBotAvatar" class="chat-bot-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="chat-bot-text">
+                            <h3 id="currentBotName">Выберите бота</h3>
+                            <p id="currentBotStatus">Для начала общения выберите бота слева</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div style="text-align: center; padding: 50px; color: var(--sakura-text-light);">
+                        <div style="font-size: 60px; color: var(--sakura-pink); margin-bottom: 20px;">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3>Добро пожаловать в Sakura Messenger!</h3>
+                        <p>Выберите бота из списка слева, чтобы начать общение.</p>
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <textarea id="messageInput" class="chat-input" placeholder="Введите сообщение..." rows="1" disabled></textarea>
+                    <button id="sendMessageBtn" class="send-btn" disabled>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно настроек -->
+    <div id="settingsModal" class="settings-modal">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h2><i class="fas fa-cog"></i> Настройки</h2>
+                <button class="close-settings" onclick="closeSettings()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="settings-body">
+                <div class="settings-section">
+                    <h3>Внешний вид</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">Тема</div>
+                        <div class="setting-control">
+                            <select id="themeSelect" class="select-input" onchange="changeTheme()">
+                                <option value="sakura">Сакура (по умолчанию)</option>
+                                <option value="dark">Темная</option>
+                                <option value="light">Светлая</option>
+                                <option value="autumn">Осенняя</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">Анимация лепестков</div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="petalsToggle" checked onchange="togglePetals()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">Цвет интерфейса</div>
+                        <div class="setting-control">
+                            <input type="color" id="colorPicker" value="#ffb7c5" onchange="changeColor()" style="width: 40px; height: 40px; border: none; cursor: pointer;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Уведомления</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">Звук уведомлений</div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="soundToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">Всплывающие уведомления</div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="popupToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Чат</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">Авто-прокрутка</div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="autoscrollToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">Показывать время сообщений</div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="timeToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">Эффект печатания</div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="typingEffectToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Публикация</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">Ваш домен</div>
+                        <div class="setting-control">
+                            <input type="text" id="domainInput" class="select-input" placeholder="sakura-messenger.ru" style="width: 200px;">
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(255, 183, 197, 0.1); border-radius: 10px;">
+                        <h4 style="color: var(--sakura-dark); margin-bottom: 10px;">Как опубликовать:</h4>
+                        <ol style="color: var(--sakura-text-light); font-size: 14px; line-height: 1.6; padding-left: 20px;">
+                            <li>Купите домен (например, sakura-messenger.ru)</li>
+                            <li>Настройте хостинг (бесплатные варианты: GitHub Pages, Netlify)</li>
+                            <li>Загрузите этот HTML файл на сервер</li>
+                            <li>Настройте SSL сертификат для HTTPS</li>
+                            <li>Протестируйте доступность по вашему домену</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="saveSettings()">
+                    <i class="fas fa-save"></i> Сохранить настройки
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        const APP_VERSION = "1.2 (alpha)";
+        let currentUser = null;
+        let currentBot = null;
+        let messages = {};
+        let settings = {};
+        
+        // Данные ботов
+        const BOTS = [
+            {
+                id: 1,
+                name: "Сакура",
+                description: "Нежная и поэтичная, как лепестки сакуры",
+                color: "#ffb7c5",
+                icon: "fas fa-spa",
+                personality: "поэтичная, нежная, романтичная"
+            },
+            {
+                id: 2,
+                name: "Кеншин",
+                description: "Мудрый самурай с философским взглядом на жизнь",
+                color: "#8a4b6e",
+                icon: "fas fa-user-ninja",
+                personality: "мудрый, сдержанный, философский"
+            },
+            {
+                id: 3,
+                name: "Ханако",
+                description: "Веселая и энергичная, любит японскую культуру",
+                color: "#e83e8c",
+                icon: "fas fa-laugh-squint",
+                personality: "веселая, энергичная, любознательная"
+            },
+            {
+                id: 4,
+                name: "Такеши",
+                description: "Серьезный и практичный, знает много фактов",
+                color: "#5d9b7e",
+                icon: "fas fa-brain",
+                personality: "серьезный, логичный, фактологичный"
+            }
+        ];
+        
+        // ========== ФУНКЦИИ УПРАВЛЕНИЯ СТРАНИЦАМИ ==========
+        function showHomePage() {
+            document.getElementById('homePage').style.display = 'flex';
+            document.getElementById('chatPage').style.display = 'none';
+            closeSettings();
+            updateStats();
+        }
+        
+        function showChatPage() {
+            document.getElementById('homePage').style.display = 'none';
+            document.getElementById('chatPage').style.display = 'flex';
+            closeSettings();
+            
+            // Инициализируем чат, если еще не инициализирован
+            if (!document.querySelector('.bot-card')) {
+                initBots();
+                loadSettings();
+            }
+        }
+        
+        function showSettings() {
+            document.getElementById('settingsModal').style.display = 'flex';
+        }
+        
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+        
+        function showLoginModal() {
+            const name = prompt("Введите ваше имя (или оставьте 'Гость'):", "Гость");
+            if (name) {
+                currentUser = {
+                    name: name.trim() || "Гость",
+                    avatarText: name.charAt(0).toUpperCase()
+                };
+                
+                document.getElementById('userName').textContent = currentUser.name;
+                document.getElementById('userAvatar').textContent = currentUser.avatarText;
+                document.getElementById('loginBtnText').textContent = currentUser.name;
+                
+                showChatPage();
+                showNotification(`Добро пожаловать, ${currentUser.name}!`, "success");
+            }
+        }
+        
+        function showBugReport() {
+            const bug = prompt("Опишите баг или предложение по улучшению:", "");
+            if (bug) {
+                alert("Спасибо за ваш отзыв! Сообщение сохранено.\n\nДля публичной версии нужно:\n1. Добавить серверную часть\n2. Настроить базу данных\n3. Создать панель администратора");
+                // В реальном приложении здесь был бы AJAX запрос на сервер
+            }
+        }
+        
+        // ========== ИНИЦИАЛИЗАЦИЯ БОТОВ ==========
+        function initBots() {
+            const botsList = document.getElementById('botsList');
+            botsList.innerHTML = '';
+            
+            BOTS.forEach(bot => {
+                const botCard = document.createElement('div');
+                botCard.className = 'bot-card';
+                botCard.onclick = () => selectBot(bot);
+                
+                botCard.innerHTML = `
+                    <div class="bot-avatar" style="background: linear-gradient(45deg, ${bot.color}, ${lightenColor(bot.color, 30)})">
+                        <i class="${bot.icon}"></i>
+                    </div>
+                    <div class="bot-info">
+                        <div class="bot-name">${bot.name}</div>
+                        <div class="bot-desc">${bot.description}</div>
+                    </div>
+                `;
+                
+                botsList.appendChild(botCard);
+            });
+        }
+        
+        function filterBots() {
+            const searchTerm = document.getElementById('botsSearch').value.toLowerCase();
+            const botCards = document.querySelectorAll('.bot-card');
+            
+            botCards.forEach(card => {
+                const botName = card.querySelector('.bot-name').textContent.toLowerCase();
+                const botDesc = card.querySelector('.bot-desc').textContent.toLowerCase();
+                
+                if (botName.includes(searchTerm) || botDesc.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        function selectBot(bot) {
+            currentBot = bot;
+            
+            // Обновляем UI
+            document.getElementById('currentBotName').textContent = bot.name;
+            document.getElementById('currentBotStatus').textContent = bot.personality + ' • онлайн';
+            document.getElementById('currentBotAvatar').innerHTML = `<i class="${bot.icon}"></i>`;
+            document.getElementById('currentBotAvatar').style.background = `linear-gradient(45deg, ${bot.color}, ${lightenColor(bot.color, 30)})`;
+            
+            // Активируем поле ввода
+            document.getElementById('messageInput').disabled = false;
+            document.getElementById('sendMessageBtn').disabled = false;
+            document.getElementById('messageInput').focus();
+            
+            // Обновляем активную карточку
+            document.querySelectorAll('.bot-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Показываем приветствие
+            showBotGreeting(bot);
+        }
+        
+        // ========== ЧАТ ==========
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || !currentBot) return;
+            
+            // Добавляем сообщение пользователя
+            addMessage(message, 'user');
+            
+            // Очищаем поле ввода
+            input.value = '';
+            input.style.height = 'auto';
+            
+            // Показываем индикатор "бот печатает"
+            showTypingIndicator();
+            
+            // Через 1-2 секунды бот отвечает
+            setTimeout(() => {
+                hideTypingIndicator();
+                const botResponse = generateBotResponse(message);
+                addMessage(botResponse, 'bot');
+            }, 1000 + Math.random() * 1000);
+        }
+        
+        function addMessage(text, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            
+            messageDiv.className = `message message-${sender}`;
+            
+            const time = new Date();
+            const timeStr = `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`;
+            
+            let avatar, name;
+            if (sender === 'user') {
+                avatar = currentUser ? currentUser.avatarText : 'Г';
+                name = currentUser ? currentUser.name : 'Вы';
+            } else {
+                avatar = `<i class="${currentBot.icon}"></i>`;
+                name = currentBot.name;
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">
+                    <div class="message-bubble">${escapeHtml(text)}</div>
+                    <div class="message-time">${timeStr} • ${name}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            
+            // Прокручиваем вниз
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function showBotGreeting(bot) {
+            const greetings = [
+                `Привет! Я ${bot.name}. ${bot.description}`,
+                `Здравствуйте! Рада вас видеть. Я ${bot.name}.`,
+                `Приветствую! Я ${bot.name}, ${bot.personality}.`,
+                `Добрый день! Я ${bot.name}. Давайте пообщаемся!`
+            ];
+            
+            const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+            addMessage(greeting, 'bot');
+        }
+        
+        function generateBotResponse(userMessage) {
+            const responses = [
+                "Интересно! Расскажите подробнее.",
+                "Я понял вас. Что еще вас интересует?",
+                "Это хороший вопрос. Давайте подумаем вместе.",
+                "Спасибо за сообщение! Я ценю наше общение.",
+                "Продолжайте, мне нравится наш разговор.",
+                "Хм, нужно подумать над этим...",
+                "Отличная мысль! А что вы думаете об этом?",
+                "Я бы добавил, что в японской культуре есть похожая концепция.",
+                "Это напоминает мне одну японскую притчу...",
+                "Согласен с вами! Продолжайте в том же духе."
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+        
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message message-bot';
+            typingDiv.id = 'typingIndicator';
+            
+            typingDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="${currentBot.icon}"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble" style="padding: 10px 20px;">
+                        <div style="display: flex; gap: 5px;">
+                            <div style="width: 8px; height: 8px; background: var(--sakura-pink); border-radius: 50%; animation: bounce 1s infinite;"></div>
+                            <div style="width: 8px; height: 8px; background: var(--sakura-pink); border-radius: 50%; animation: bounce 1s infinite 0.2s;"></div>
+                            <div style="width: 8px; height: 8px; background: var(--sakura-pink); border-radius: 50%; animation: bounce 1s infinite 0.4s;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Добавляем стили для анимации
+            if (!document.getElementById('typingAnimation')) {
+                const style = document.createElement('style');
+                style.id = 'typingAnimation';
+                style.textContent = `
+                    @keyframes bounce {
+                        0%, 60%, 100% { transform: translateY(0); }
+                        30% { transform: translateY(-5px); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+        
+        function hideTypingIndicator() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+        
+        // ========== НАСТРОЙКИ ==========
+        function loadSettings() {
+            const saved = localStorage.getItem('sakuraSettings');
+            if (saved) {
+                settings = JSON.parse(saved);
+                
+                // Применяем настройки
+                if (settings.theme) {
+                    document.getElementById('themeSelect').value = settings.theme;
+                    changeTheme();
+                }
+                if (settings.color) {
+                    document.getElementById('colorPicker').value = settings.color;
+                    changeColor();
+                }
+                if (settings.petals !== undefined) {
+                    document.getElementById('petalsToggle').checked = settings.petals;
+                    togglePetals();
+                }
+                if (settings.domain) {
+                    document.getElementById('domainInput').value = settings.domain;
+                }
+            }
+        }
+        
+        function saveSettings() {
+            settings = {
+                theme: document.getElementById('themeSelect').value,
+                color: document.getElementById('colorPicker').value,
+                petals: document.getElementById('petalsToggle').checked,
+                sound: document.getElementById('soundToggle').checked,
+                popup: document.getElementById('popupToggle').checked,
+                autoscroll: document.getElementById('autoscrollToggle').checked,
+                showTime: document.getElementById('timeToggle').checked,
+                typingEffect: document.getElementById('typingEffectToggle').checked,
+                domain: document.getElementById('domainInput').value
+            };
+            
+            localStorage.setItem('sakuraSettings', JSON.stringify(settings));
+            showNotification("Настройки сохранены!", "success");
+            closeSettings();
+            
+            // Обновляем домен в шапке
+            if (settings.domain) {
+                document.getElementById('domainLink').textContent = settings.domain;
+            }
+        }
+        
+        function changeTheme() {
+            const theme = document.getElementById('themeSelect').value;
+            document.body.classList.remove('theme-dark', 'theme-light', 'theme-autumn');
+            
+            if (theme !== 'sakura') {
+                document.body.classList.add(`theme-${theme}`);
+            }
+        }
+        
+        function changeColor() {
+            const color = document.getElementById('colorPicker').value;
+            document.documentElement.style.setProperty('--sakura-pink', color);
+        }
+        
+        function togglePetals() {
+            const petals = document.getElementById('petalsToggle').checked;
+            const container = document.getElementById('sakuraPetals');
+            
+            if (petals) {
+                createPetals();
+            } else {
+                container.innerHTML = '';
+            }
+        }
+        
+        // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
+        function createPetals() {
+            const container = document.getElementById('sakuraPetals');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 15; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'sakura-petal';
+                
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const size = 15 + Math.random() * 15;
+                const opacity = 0.3 + Math.random() * 0.5;
+                const rotation = Math.random() * 360;
+                const duration = 15 + Math.random() * 20;
+                const delay = Math.random() * 5;
+                
+                petal.style.cssText = `
+                    left: ${left}%;
+                    top: ${top}%;
+                    width: ${size}px;
+                    height: ${size}px;
+                    opacity: ${opacity};
+                    transform: rotate(${rotation}deg);
+                    animation-duration: ${duration}s;
+                    animation-delay: ${delay}s;
+                `;
+                
+                container.appendChild(petal);
+            }
+        }
+        
+        function lightenColor(color, percent) {
+            const num = parseInt(color.replace("#", ""), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            
+            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                          (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                          (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function showNotification(message, type = "info") {
+            // Простая реализация уведомления
+            alert(message);
+        }
+        
+        function updateStats() {
+            // Генерируем случайные статистики для демонстрации
+            document.getElementById('userCount').textContent = 
+                (1247 + Math.floor(Math.random() * 50)).toLocaleString();
+            document.getElementById('messageCount').textContent = 
+                (15892 + Math.floor(Math.random() * 200)).toLocaleString();
+        }
+        
+        // ========== ОБРАБОТЧИКИ СОБЫТИЙ ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация
+            createPetals();
+            loadSettings();
+            updateStats();
+            
+            // Обработчик отправки сообщения
+            document.getElementById('sendMessageBtn').onclick = sendMessage;
+            
+            document.getElementById('messageInput').onkeypress = function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            };
+            
+            // Авто-высота textarea
+            document.getElementById('messageInput').oninput = function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+            };
+            
+            // Закрытие модального окна по клику на фон
+            document.getElementById('settingsModal').onclick = function(e) {
+                if (e.target === this) closeSettings();
+            };
+            
+            // Эмуляция входа пользователя (для демо)
+            setTimeout(() => {
+                if (!currentUser) {
+                    currentUser = {
+                        name: "Гость",
+                        avatarText: "Г"
+                    };
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
